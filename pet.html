@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html lang=us>
+   <meta charset=UTF-8>
+   <head>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+   </head>
+   <style>
+      
+        body{
+            background:rgb(255,255,255);
+        }
+        .green{
+          background:green
+        }
+        #blue{
+            background:blue
+        }
+        #red{
+            color:red
+        }
+   </style>
+   <body class="w3-monospace w3-center">
+        <p>
+            OURPETSAW
+        </p>
+        <div id='snap'>
+            <div id="camera" style="margin-left: 40%;"></div>
+            <input type="button" value="Take a Snap" id="btPic" onclick="takeSnapShot()" /> 
+        </div>
+        <div class="w3-container w3-center" id='card'>
+            <div class="w3-card-4 w3-center" style="width:50%; margin-left:25%">
+                <div class="w3-center"><b>Current status</b><b class="w3-right" onclick="closeCard()">X</b></div>
+                <div class="w3-center"><b id="status"></b></div>
+                <div class=" w3-right">
+                    <div><span>Date/Time:</span><span id="datetime"></span></div>
+                </div>
+                <br />
+                <br />
+                <br />
+                <div class="w3-center">
+                    <img src="img_snowtops.jpg" alt="Alps" style="width:30%" id='base64image'/>
+                    <a href="tel:123-456-7890" id='call' style="display: none;">Call Doctor</a>
+                </div>
+                <div class="w3-container w3-center" >
+                    <br />
+                    <div class="w3-center"><span id='name'>Morphy</span></div>
+                    <div id='age'>2 Years 3 Months Old</div>
+                    <div class="w3-container w3-left w3-center" style="width: 33%;">
+                        <img src='./temp.jpg'>
+                        <div>Temperature</div>
+                        <div style="color: red">
+                            <b id='temp'></b>
+                        </div>
+                    </div>
+                    <div class="w3-container w3-left w3-center" style="width: 33%;">
+                        <img src='./pulse.jpg'>
+                        <div>Pulse</div>
+                        <div style="color: red">
+                            <b id='pulse'></b>
+                        </div>
+                    </div>
+                    <div class="w3-container w3-left w3-center" style="width: 33%;">
+                        <img src='./resp.jpg'>
+                        <div>Respiration</div>
+                        <div style="color: red">
+                            <b id='resp'></b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+   </body>
+   <script>
+      var dt = new Date();
+      document.getElementById("datetime").innerHTML = dt.toLocaleString();
+   </script>
+   <script>
+            var today = new Date();
+            var day = today.getDay();      
+            var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];      
+            var dayname;
+            dayname = days[0] + " " + days[1] + " " + days[2] + " " + days[3] + " " + days[4] + " " + days[5] + " " + days[6];
+   </script>
+   <script>
+      // CAMERA SETTINGS.
+      Webcam.set({
+          width: 220,
+          height: 190,
+          image_format: 'jpeg',
+          jpeg_quality: 100
+      });
+      Webcam.attach('#camera');
+
+      var dogData = [
+      {
+        'name': 'Idly',
+        'temp': '101',
+        'resp': '23',
+        'pulse': '80',
+        'status': 'Normal',
+        'age': '5 Years', 
+        },
+        {
+        'name': 'Vada',
+        'temp': '105',
+        'resp': '40',
+        'pulse': '90',
+        'status': 'Alert',
+        'age': '3 Years', 
+        },
+        {
+        'name': 'Sambar',
+        'temp': '101',
+        'resp': '35',
+        'pulse': '80',
+        'status': 'Attention',
+        'age': '8 Years', 
+        }
+      ];
+      
+      // TAKE A SNAPSHOT.
+      var dataIndex = 1;
+      var isDispalyed = true;
+      document.getElementById("card").style.display = "none";
+      takeSnapShot = function () {
+          Webcam.snap(function (data_uri) {
+                document.getElementById('base64image').src = data_uri;
+                var dt = new Date();
+                document.getElementById("datetime").innerHTML = dt.toLocaleString();
+
+                if(dataIndex == (dogData.length-1)){
+                    dataIndex = 0;
+                }
+                else{
+                    ++dataIndex;
+                }
+                
+                setData(dogData[dataIndex].status, 'status');
+                setData(dogData[dataIndex].age, 'age');
+                setData(dogData[dataIndex].name, 'name');
+                setData(dogData[dataIndex].pulse, 'pulse');
+                setData(dogData[dataIndex].temp, 'temp');
+                setData(dogData[dataIndex].resp, 'resp');
+                document.getElementById("call").style.display = "none";
+
+                
+                if(dogData[dataIndex].status == "Attention"){
+                    document.getElementById("status").style.color = "#cece1a";
+                    document.getElementById("pulse").style.color = "#cece1a";
+                    document.getElementById("temp").style.color = "#cece1a";
+                    document.getElementById("resp").style.color = "#cece1a";
+                    document.getElementById("call").style.display = "block";
+                }
+                else if(dogData[dataIndex].status == "Normal"){
+                    document.getElementById("status").style.color = "green";
+                    document.getElementById("resp").style.color = "green";
+                    document.getElementById("pulse").style.color = "green";
+                    document.getElementById("temp").style.color = "green";
+                }
+                else{
+                    document.getElementById("status").style.color = "red";
+                    document.getElementById("pulse").style.color = "red";
+                    document.getElementById("temp").style.color = "red";
+                    document.getElementById("resp").style.color = "red";
+                    document.getElementById("call").style.display = "block";
+                }
+
+                if(isDispalyed){
+                    document.getElementById("snap").style.display = "none";
+                    document.getElementById("card").style.display = "block";
+                    isDispalyed = !isDispalyed;
+                }
+          });
+      }
+
+      var closeCard = function(){
+            document.getElementById("snap").style.display = "block";
+            document.getElementById("card").style.display = "none";
+            isDispalyed = !isDispalyed;
+      }
+      var setData = function(data, elementId){
+          document.getElementById(elementId).innerText = data;
+      }
+      
+      // DOWNLOAD THE IMAGE.
+      downloadImage = function (name, datauri) {
+          var a = document.createElement('a');
+          a.setAttribute('download', name + '.jpg');
+          a.setAttribute('href', datauri);
+          a.click();
+      }
+   </script>
+</html>
